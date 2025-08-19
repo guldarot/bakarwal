@@ -34,6 +34,35 @@ These scripts will guide you through:
 2. Starting development servers
 3. Deploying with Docker (if available)
 
+## Environment Variables
+
+Before running the application with Docker, you need to set up your environment variables:
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Edit the `.env` file and replace the placeholder values with your actual values:
+```env
+# MongoDB Configuration
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=your_secure_password
+MONGODB_URI=mongodb://admin:your_secure_password@mongodb:27017/animal_raiser_connect?authSource=admin
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key_here
+
+# Cloudinary Configuration (for image storage)
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+# Server Configuration
+PORT=5000
+NODE_ENV=production
+```
+
 ## Backend Deployment
 
 ### Docker Deployment (Recommended for Production)
@@ -48,7 +77,9 @@ git clone <repository-url>
 cd animal-raiser-connect
 ```
 
-3. Start the application with Docker Compose:
+3. Set up environment variables (see above)
+
+4. Start the application with Docker Compose:
 ```bash
 docker-compose up -d
 ```
@@ -60,6 +91,11 @@ To stop the application:
 ```bash
 docker-compose down
 ```
+
+The Docker Compose configuration includes:
+- Database healthcheck to ensure the backend waits for MongoDB to be ready
+- Environment variable support for secure configuration
+- Volume persistence for MongoDB data
 
 ### Local Development Deployment
 
