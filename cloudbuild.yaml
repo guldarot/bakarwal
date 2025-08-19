@@ -1,0 +1,49 @@
+# Google Cloud Build configuration for Animal Raiser Connect
+
+# Define the steps for building and deploying the application
+steps:
+  # Build the backend Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/animal-raiser-backend:$COMMIT_SHA', './server']
+    id: 'build-backend'
+
+  # Push the backend image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/animal-raiser-backend:$COMMIT_SHA']
+    id: 'push-backend'
+    waitFor: ['build-backend']
+
+  # Deploy to Cloud Run (optional - uncomment to enable)
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   args:
+  #     - 'run'
+  #     - 'deploy'
+  #     - 'animal-raiser-backend'
+  #     - '--image=gcr.io/$PROJECT_ID/animal-raiser-backend:$COMMIT_SHA'
+  #     - '--platform=managed'
+  #     - '--region=$_REGION'
+  #     - '--allow-unauthenticated'
+  #     - '--set-env-vars=MONGODB_URI=$_MONGODB_URI,JWT_SECRET=$_JWT_SECRET,CLOUDINARY_CLOUD_NAME=$_CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY=$_CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET=$_CLOUDINARY_API_SECRET'
+  #   id: 'deploy-backend'
+  #   waitFor: ['push-backend']
+
+# Define images to be pushed to Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/animal-raiser-backend:$COMMIT_SHA'
+
+# Define substitutions that can be provided during build triggering
+substitutions:
+  _REGION: us-central1
+  # _MONGODB_URI: Your MongoDB connection string
+  # _JWT_SECRET: Your JWT secret
+  # _CLOUDINARY_CLOUD_NAME: Your Cloudinary cloud name
+  # _CLOUDINARY_API_KEY: Your Cloudinary API key
+  # _CLOUDINARY_API_SECRET: Your Cloudinary API secret
+
+# Define timeout for the build (optional)
+timeout: 1200s
+
+# Define tags for the build (optional)
+tags:
+  - 'animal-raiser-connect'
+  - 'backend'

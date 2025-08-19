@@ -223,6 +223,40 @@ docker run -p 5000:5000 \
   animal-raiser-connect-server
 ```
 
+#### Option 4: Deploy with Google Cloud Build
+
+1. Create a Google Cloud Platform account at https://console.cloud.google.com/
+
+2. Install and initialize the Google Cloud SDK:
+```bash
+# Follow instructions at https://cloud.google.com/sdk/docs/install
+gcloud init
+```
+
+3. Enable the necessary APIs:
+```bash
+gcloud services enable cloudbuild.googleapis.com
+gcloud services enable run.googleapis.com
+```
+
+4. Update the substitutions in `cloudbuild.yaml` with your environment variables:
+```yaml
+substitutions:
+  _REGION: us-central1
+  _MONGODB_URI: your_mongodb_connection_string
+  _JWT_SECRET: your_jwt_secret
+  _CLOUDINARY_CLOUD_NAME: your_cloudinary_cloud_name
+  _CLOUDINARY_API_KEY: your_cloudinary_api_key
+  _CLOUDINARY_API_SECRET: your_cloudinary_api_secret
+```
+
+5. Submit the build:
+```bash
+gcloud builds submit --config=cloudbuild.yaml
+```
+
+6. (Optional) To enable automatic deployment to Cloud Run, uncomment the deploy step in `cloudbuild.yaml` and provide the necessary environment variables.
+
 ## Frontend Deployment
 
 ### Local Development
