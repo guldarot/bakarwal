@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:5.0
+    container_name: animal-raiser-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  # Backend API
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: animal-raiser-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://admin:password@mongodb:27017/animal_raiser_connect?authSource=admin
+      - JWT_SECRET=animal_raiser_connect_secret_key
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+volumes:
+  mongodb_data:
